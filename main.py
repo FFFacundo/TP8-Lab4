@@ -149,7 +149,7 @@ if st.session_state["datos_cargados"] is not None:
 
 
 else:
-    st.warning("Por favor, suba un archivo CSV para comenzar.")
+    st.warning("Por favor, suba un archivo CSV.")
 
 
 
