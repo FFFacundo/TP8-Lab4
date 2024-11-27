@@ -22,7 +22,6 @@ if uploaded_file is not None:
     st.session_state["datos_cargados"] = datos
 
 def graficar(ventas_mensuales, producto_nombre):
-    # Asegúrate de que la columna 'Fecha' esté creada correctamente
     ventas_mensuales['Fecha'] = pd.to_datetime(
         ventas_mensuales['Año'].astype(str) + '-' + ventas_mensuales['Mes'].astype(str) + '-01', 
         format='%Y-%m-%d'
@@ -33,11 +32,11 @@ def graficar(ventas_mensuales, producto_nombre):
         ventas_mensuales["Fecha"], 
         ventas_mensuales["Unidades_vendidas"], 
         label="Unidades Vendidas", 
-        linewidth=3, 
+        linewidth=1, 
         color="#39FF14"
     )
 
-    # Línea de tendencia
+    #Línea de tendencia
     if len(ventas_mensuales) > 1:
         z = np.polyfit(
             ventas_mensuales["Fecha"].apply(lambda x: x.toordinal()), 
@@ -49,7 +48,7 @@ def graficar(ventas_mensuales, producto_nombre):
             ventas_mensuales["Fecha"], 
             p(ventas_mensuales["Fecha"].apply(lambda x: x.toordinal())), 
             linestyle="--", 
-            color="#FFD700",  # Color dorado brillante para la línea de tendencia
+            color="white",
             linewidth=2, 
             label="Tendencia",
         )
@@ -57,7 +56,7 @@ def graficar(ventas_mensuales, producto_nombre):
     ax.set_title(f"Evolución de Ventas - {producto_nombre}", fontsize=18, fontweight='bold', color="darkslategray")
     ax.set_xlabel("Fecha", fontsize=14, fontweight='bold', color="dimgray")
     ax.set_ylabel("Unidades Vendidas", fontsize=14, fontweight='bold', color="dimgray")
-    ax.set_facecolor("#000000")  # Fondo del área de trazado
+    ax.set_facecolor("#000000")  #Fondo del área de trazado
     ax.grid(True, linestyle="--", alpha=0.6, color="gray")
     ax.legend(fontsize=12, loc="upper left", frameon=True, facecolor="white", edgecolor="gray")
 
@@ -84,32 +83,32 @@ if st.session_state["datos_cargados"] is not None:
             st.subheader(f"{producto}")
             datos_producto = datos[datos['Producto'] == producto]
             
-            # Cálculo de PROMEDIOS
+            #Cálculo de PROMEDIOS
 
-            # Precio promedio
+            #Precio promedio
             datos_producto['PrecioPromedio'] = datos_producto['Ingreso_total'] / datos_producto['Unidades_vendidas']
             precio_promedio = datos_producto['PrecioPromedio'].mean()
-            # Ganancias promedio y el margen
+            #Ganancias promedio y el margen
             datos_producto['Ganancia'] = datos_producto['Ingreso_total'] - datos_producto['Costo_total']
             datos_producto['Margen'] = (datos_producto['Ganancia'] / datos_producto['Ingreso_total']) * 100
             margen_promedio = datos_producto['Margen'].mean()
-            # Unidades vendidas
+            #Unidades vendidas
             unidades_promedio = datos_producto['Unidades_vendidas'].mean()
             unidades_vendidas = datos_producto['Unidades_vendidas'].sum()
 
-            # Cálculo de las VARIACIONES
+            #Cálculo de las VARIACIONES
 
-            # Variación anual del precio promedio
+            #Variación anual del precio promedio
             precio_promedio_anual = datos_producto.groupby('Año')['PrecioPromedio'].mean()
             variacion_precio_promedio_anual = precio_promedio_anual.pct_change().mean() * 100
-            # Variación anual del margen promedio
+            #Variación anual del margen promedio
             margen_promedio_anual = datos_producto.groupby('Año')['Margen'].mean()
             variacion_margen_promedio_anual = margen_promedio_anual.pct_change().mean() * 100
-            # Variación anual de las unidades vendidas
+            #Variación anual de las unidades vendidas
             unidades_por_ano = datos_producto.groupby('Año')['Unidades_vendidas'].sum()
             variacion_anual_unidades = unidades_por_ano.pct_change().mean() * 100
             
-            col1, col2 = st.columns([1, 3])
+            col1, col2 = st.columns([1, 3]) #25%/75%
             
             with col1:
                 st.metric(label="Precio Promedio", value=f"${precio_promedio:,.0f}", delta=f"{variacion_precio_promedio_anual:.2f}%")
